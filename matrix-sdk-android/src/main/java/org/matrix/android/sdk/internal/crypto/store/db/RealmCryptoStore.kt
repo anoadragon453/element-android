@@ -1254,6 +1254,9 @@ internal class RealmCryptoStore @Inject constructor(
                         if (newState == OutgoingRoomKeyRequestState.UNSENT) {
                             // clear the old replies
                             this.replies.deleteAllFromRealm()
+                            this.creationTimeStamp = clock.epochMillis()
+                        } else if (newState == OutgoingRoomKeyRequestState.CANCELLATION_PENDING_AND_WILL_RESEND) {
+                            this.creationTimeStamp = clock.epochMillis()
                         }
                     }
         }
@@ -1652,6 +1655,9 @@ internal class RealmCryptoStore @Inject constructor(
         val roomId = withHeldContent.roomId ?: return
         val sessionId = withHeldContent.sessionId ?: return
         if (withHeldContent.algorithm != MXCRYPTO_ALGORITHM_MEGOLM) return
+        Timber.tag(loggerTag.value).v(
+                "WithHeldMegolmSession set for $roomId|$sessionId is ${withHeldContent.code}"
+        )
         doRealmTransaction(realmConfiguration) { realm ->
             WithHeldSessionEntity.getOrCreate(realm, roomId, sessionId)?.let {
                 it.code = withHeldContent.code
@@ -1673,6 +1679,10 @@ internal class RealmCryptoStore @Inject constructor(
                         senderKey = it.senderKey
                 )
             }
+        }.also {
+            Timber.tag(loggerTag.value).v(
+                    "WithHeldMegolmSession get for $roomId|$sessionId is ${it?.code}"
+            )
         }
     }
 
