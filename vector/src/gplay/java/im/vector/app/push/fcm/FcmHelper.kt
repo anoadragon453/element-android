@@ -23,7 +23,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import im.vector.app.R
-import im.vector.app.core.di.ActiveSessionHolder
 import im.vector.app.core.di.DefaultSharedPreferences
 import im.vector.app.core.pushers.PushersManager
 import timber.log.Timber
@@ -105,13 +104,11 @@ class FcmHelper @Inject constructor(
         return resultCode == ConnectionResult.SUCCESS
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onEnterForeground(activeSessionHolder: ActiveSessionHolder) {
+    fun onEnterForeground() {
         // No op
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onEnterBackground(activeSessionHolder: ActiveSessionHolder) {
+    fun onEnterBackground() {
         // No op
     }
 }

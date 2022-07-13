@@ -31,6 +31,7 @@ import javax.inject.Inject
 class FcmHelper @Inject constructor(
         private val context: Context,
         private val backgroundSyncStarter: BackgroundSyncStarter,
+        private val activeSessionHolder: ActiveSessionHolder,
 ) {
 
     fun isFirebaseAvailable(): Boolean = false
@@ -62,13 +63,13 @@ class FcmHelper @Inject constructor(
         // No op
     }
 
-    fun onEnterForeground(activeSessionHolder: ActiveSessionHolder) {
+    fun onEnterForeground() {
         // try to stop all regardless of background mode
         activeSessionHolder.getSafeActiveSession()?.syncService()?.stopAnyBackgroundSync()
         AlarmSyncBroadcastReceiver.cancelAlarm(context)
     }
 
-    fun onEnterBackground(activeSessionHolder: ActiveSessionHolder) {
+    fun onEnterBackground() {
         backgroundSyncStarter.start(activeSessionHolder)
     }
 }

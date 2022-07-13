@@ -176,7 +176,7 @@ class VectorApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 Timber.i("App entered foreground")
-                fcmHelper.onEnterForeground(activeSessionHolder)
+                fcmHelper.onEnterForeground()
                 activeSessionHolder.getSafeActiveSession()?.also {
                     it.syncService().stopAnyBackgroundSync()
                 }
@@ -184,7 +184,7 @@ class VectorApplication :
 
             override fun onPause(owner: LifecycleOwner) {
                 Timber.i("App entered background")
-                fcmHelper.onEnterBackground(activeSessionHolder)
+                fcmHelper.onEnterBackground()
             }
         })
         ProcessLifecycleOwner.get().lifecycle.addObserver(appStateHandler)
