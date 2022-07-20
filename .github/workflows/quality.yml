@@ -8,9 +8,8 @@ on:
 # Enrich gradle.properties for CI/CD
 env:
   CI_GRADLE_ARG_PROPERTIES: >
-    -Porg.gradle.jvmargs=-Xmx4g
+    "-Dorg.gradle.jvmargs=-XX:MaxRAM=7g -Xmx3g -XX:MaxMetaspaceSize=1g"
     -Porg.gradle.parallel=false
-    --no-daemon
 
 jobs:
   check:
@@ -115,7 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Dependency analysis
-        run: ./gradlew dependencyCheckAnalyze $CI_GRADLE_ARG_PROPERTIES
+        run: ./gradlew dependencyCheckAnalyze "$CI_GRADLE_ARG_PROPERTIES"
       - name: Upload dependency analysis
         if: always()
         uses: actions/upload-artifact@v3
@@ -142,7 +141,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Lint analysis
-        run: ./gradlew clean :vector:lint --stacktrace $CI_GRADLE_ARG_PROPERTIES
+        run: ./gradlew clean :vector:lint --stacktrace "$CI_GRADLE_ARG_PROPERTIES"
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v3
@@ -175,7 +174,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Lint ${{ matrix.target }} release
-        run: ./gradlew clean lint${{ matrix.target }}Release --stacktrace $CI_GRADLE_ARG_PROPERTIES
+        run: ./gradlew clean lint${{ matrix.target }}Release --stacktrace "$CI_GRADLE_ARG_PROPERTIES"
       - name: Upload ${{ matrix.target }} linting report
         if: always()
         uses: actions/upload-artifact@v3
@@ -195,7 +194,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run detekt
         run: |
-          ./gradlew detekt $CI_GRADLE_ARG_PROPERTIES
+          ./gradlew detekt "$CI_GRADLE_ARG_PROPERTIES"
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v3
